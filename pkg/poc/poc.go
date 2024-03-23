@@ -1,9 +1,11 @@
 package poc
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/zan8in/afrog/v3/pkg/utils"
@@ -280,7 +282,10 @@ func (r *Rule) UnmarshalYAML(unmarshal func(any) error) error {
 	r.StopIfMismatch = tmp.StopIfMismatch
 	r.BeforeSleep = tmp.BeforeSleep
 	r.order = order
-
+	//TODO debug 完就去掉
+	b, _ := json.MarshalIndent(r, "", "  ")
+	f, file, line, _ := runtime.Caller(1)
+	fmt.Println("[(r *Rule) UnmarshalYAML]", runtime.FuncForPC(f).Name(), "filename:", file, "line:", line, "order:", order, "r:\n", string(b))
 	order += 1
 	return nil
 }
@@ -293,6 +298,10 @@ func (m *RuleMapSlice) UnmarshalYAML(unmarshal func(any) error) error {
 	if err != nil {
 		return err
 	}
+	//TODO debug 完就去掉
+	b, _ := json.MarshalIndent(tempMap, "", "  ")
+	f, file, line, _ := runtime.Caller(1)
+	fmt.Println("[(m *RuleMapSlice) UnmarshalYAML]", runtime.FuncForPC(f).Name(), "filename:", file, "line:", line, "order:", order, "tempMap:\n", string(b))
 
 	newRuleSlice := make([]RuleMap, len(tempMap))
 	for roleName, role := range tempMap {
